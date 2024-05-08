@@ -22,6 +22,7 @@
 * SOFTWARE.
 */
 
+#include <chrono>
 #include <random>
 
 #include "hypersphere.hh"
@@ -93,7 +94,10 @@ std::vector<histogram> compute(const uint8_t min_dimensions,
 }
 
 int main() {
+   auto start    = std::chrono::high_resolution_clock::now();
    auto dimensional_histogram= compute();
+   auto stop     = std::chrono::high_resolution_clock::now();
+   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
    int dim = 2;
    for (auto& histogram : dimensional_histogram) {
@@ -101,6 +105,7 @@ int main() {
       std::cout << histogram << std::endl;
       ++dim;
    }
+   std::cerr << "time: " << duration.count() << " ms" << std::endl;
 
    return EXIT_SUCCESS;
 }

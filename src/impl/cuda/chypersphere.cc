@@ -9,7 +9,7 @@
 * email : gmaldonado@cs.binghamton.edu
 * date  : 2024-05-05
 * web   : https://cs.binghamton.edu/~gmaldonado/
-*
+*`
 * file name:   chypersphere.cc
 * description: D-dimensional Hypersphere computation using CUDA
 *
