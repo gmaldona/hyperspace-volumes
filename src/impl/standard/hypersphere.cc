@@ -22,26 +22,24 @@
 * SOFTWARE.
 */
 
-#include <algorithm>
 #include <random>
 
 #include "hypersphere.hh"
 
 //==================================================================== 80 ====>>
 
-histogram::histogram(const int _bins, const double _intervals)
-                        : bins(_bins), intervals(_intervals),
-                        _histogram(_bins, 0) {}
+histogram::histogram(const int    _bins,
+                     const double _intervals,
+                     const size_t _samples) : bins(_bins),
+                                              intervals(_intervals),
+                                              samples(_samples),
+                                              _histogram(_bins, 0) {}
 
 void histogram::insert(double sample) {
-   if (sample == 1.0) {
-      ++this->_histogram[std::floor(sample * bins) - 1];
-   } else {
-      ++this->_histogram[std::floor(sample * bins)];
-   }
+   ++this->_histogram[(size_t)std::ceil(sample * bins) - 1];
 }
 
-double histogram::getIntervals() {
+double histogram::getIntervals() const {
    return this->intervals;
 }
 
@@ -49,7 +47,15 @@ std::vector<int> histogram::getHistogram() {
    return this->_histogram;
 }
 
-void compute(const uint8_t min_dimensions,
+std::vector<double> histogram::getRelativeFractionsHistogram() {
+   std::vector<double> mapped(_histogram.size());
+   std::transform(_histogram.begin(), _histogram.end(), mapped.begin(), [&](int x){
+      return (double)x / (double)this->samples;
+   });
+   return mapped;
+}
+
+std::vector<histogram> compute(const uint8_t min_dimensions,
              const uint8_t max_dimensions,
              const size_t  max_samples) {
 
@@ -60,7 +66,7 @@ void compute(const uint8_t min_dimensions,
    std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
    auto dimensional_histogram = generate_histograms(max_dimensions - min_dimensions + 1,
-                                                                      100, 0.01);
+                                                                      100, 0.01, max_samples);
    // dimension - sample - point
    std::vector<std::vector<std::vector<double>>>
       dimensional_samples(max_dimensions - min_dimensions + 1);
@@ -78,22 +84,24 @@ void compute(const uint8_t min_dimensions,
                                            });
          if (distance <= 1.0) {
             dimensional_samples[dims - min_dimensions].push_back(point);
-            dimensional_histogram[dims - min_dimensions].insert(distance);
+            dimensional_histogram[dims - min_dimensions].insert(1 - distance);
             ++samples;
          }
       }
    }
+   return dimensional_histogram;
+}
 
-   int dim = min_dimensions;
+int main() {
+   auto dimensional_histogram= compute();
+
+   int dim = 2;
    for (auto& histogram : dimensional_histogram) {
       std::cout << dim << "-Dimension: " << std::endl;
       std::cout << histogram << std::endl;
       ++dim;
    }
-}
 
-int main(void) {
-   compute();
-   return 0;
+   return EXIT_SUCCESS;
 }
 //==================================================================== 80 ====>>

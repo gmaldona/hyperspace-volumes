@@ -22,8 +22,10 @@
 * SOFTWARE.
 */
 
+#include <algorithm>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 //==================================================================== 80 ====>>
 
@@ -33,14 +35,16 @@
 class histogram {
 
  public:
-   histogram(const int bins, const double intervals);
+   histogram(const int bins, const double intervals, const size_t samples);
    void insert(double sample);
-   double getIntervals();
+   double getIntervals() const;
    std::vector<int> getHistogram();
+   std::vector<double> getRelativeFractionsHistogram();
 
  private:
    const int bins;
-   const float intervals;
+   const double intervals;
+   const size_t samples;
    std::vector<int> _histogram;
 };
 
@@ -51,10 +55,13 @@ class histogram {
  * @param intervals
  * @return
  */
-std::vector<histogram> generate_histograms(const size_t n, const int bins, const double intervals) {
+std::vector<histogram> generate_histograms(const size_t n,
+                                           const int bins,
+                                           const double intervals,
+                                           const size_t samples) {
    std::vector<histogram> histograms;
    for (size_t i = 0; i < n; ++i) {
-      histograms.emplace_back(bins, intervals);
+      histograms.emplace_back(bins, intervals, samples);
    }
    return histograms;
 }
@@ -66,12 +73,20 @@ std::vector<histogram> generate_histograms(const size_t n, const int bins, const
  * @return
  */
 std::ostream& operator<<(std::ostream& os, histogram _histogram) {
+   auto fractional = _histogram.getRelativeFractionsHistogram();
    for (size_t i = 0; i < _histogram.getHistogram().size() - 1; ++i) {
       os << i * _histogram.getIntervals() << " - "
          << (i + 1) * _histogram.getIntervals() << " : "
-         << _histogram.getHistogram()[i] << " ; ";
+         << fractional[i] << std::setprecision(5) << " ; ";
    }
    os << std::endl;
+
+//   auto total = 0.0;
+//   for (int i = 0; i < 50; ++i) {
+//      total += fractional[i];
+//   }
+//   os << "[0.0, 0.5] : " << total << std::setprecision(5) << std::endl;
+
    return os;
 }
 
@@ -81,8 +96,8 @@ std::ostream& operator<<(std::ostream& os, histogram _histogram) {
  * @param max_dimensions
  * @param max_samples
  */
-void compute(const uint8_t min_dimensions = 2,
-             const uint8_t max_dimensions = 16,
-             const size_t  max_samples    = 125'000);
+std::vector<histogram> compute(const uint8_t min_dimensions = 2,
+                               const uint8_t max_dimensions = 16,
+                               const size_t  max_samples    = 10'000);
 
 //==================================================================== 80 ====>>
