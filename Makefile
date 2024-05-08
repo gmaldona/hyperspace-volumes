@@ -21,13 +21,13 @@
 #
 
 CC     = g++
-CFLAGS = -std=c++17 -Wall -Wextra -pedantic -g -O3
+CFLAGS = -std=c++17 -Wall -Wextra -pedantic -g # -O3
 SRC    = src/impl
 BUILD  = build/impl
 
 all: simd cuda cpu
 
-default: simd # clion debugger can only target one dependency.
+default: cpu # clion debugger can only target one dependency.
 
 # SIMD Implementation <<=============================================== 80 ===>>
 .PHONY: simd

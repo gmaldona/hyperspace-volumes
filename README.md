@@ -1,4 +1,4 @@
-# Volume of a D-dimensional Hypersphere
+# Volume of a D-dimensional Hypersphere (CUDA/SIMD)
 
 CS 547 High Performance Computing @ Binghamton University
 * release date 2024-04-29 (piazza)
@@ -13,6 +13,10 @@ Last working commit:
 
 ## Execution
 Included within the repository is a [Makefile](Makefile).
+
+```shell
+make # will make all targets.
+```
 
 ### CPU (Standard) Implementation
 ```shell
