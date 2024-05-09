@@ -10,7 +10,7 @@
 * date  : 2024-05-05
 * web   : https://cs.binghamton.edu/~gmaldonado/
 *`
-* file name:   chypersphere.cc
+* file name:   chypersphere.cu
 * description: D-dimensional Hypersphere computation using CUDA
 *
 *  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -22,6 +22,8 @@
 * SOFTWARE.
 */
 
+#include<stdio.h>
+#include<stdlib.h>
 #include <iostream>
 #include <vector>
 #include <random>
@@ -34,16 +36,14 @@
 
 __global__ void compute_distances(int max_samples, 
                                     int max_dimensions,
-                                    double** random_numbers,
+                                    double* random_numbers,
                                     double* distances) {
-   int index  = threadIdx.x;
-   int stride = blockDim.x;
-   for (int i = index; i < max_samples; i += stride) {
-      double distance = 0.0;
+
+   for (int i = 0; i < 1; ++i) {
       for (int j = 0; j < max_dimensions; ++j) {
-         distance += random_numbers[i][j] * random_numbers[i][j];
+         printf("%f => %f\n", random_numbers[(max_dimensions * i) + j], random_numbers[(max_dimensions * i) + j] * random_numbers[(max_dimensions * i) + j]);
+         distances[i] += (random_numbers[(max_dimensions * i) + j] * random_numbers[(max_dimensions * i) + j]);
       }
-      distances[i] = distance;
    } 
 }
 
@@ -56,43 +56,40 @@ void compute(const uint8_t min_dimensions, const uint8_t max_dimensions,
    std::mt19937 e2(rd());
    std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
-   double** random_numbers;
-   double** random_numbers_d;
+   double* random_numbers;
+   double* random_numbers_d;
    
    double * distances;
    double * distances_d;
 
-   random_numbers = (double**) malloc(max_samples * sizeof(double*));
-   cudaMalloc(&random_numbers_d, max_samples * sizeof(double*));
-   cudaMemcpy(random_numbers_d, random_numbers, max_samples * sizeof(double), cudaMemcpyHostToDevice);
-   for (size_t i = 0; i < max_samples; ++i) {
-      random_numbers[i] = (double*) malloc(max_dimensions * sizeof(double));
-      cudaMalloc(&random_numbers[i], max_dimensions * sizeof(double));
-      cudaMemcpy(random_numbers[i], random_numbers[i], max_samples * sizeof(double), cudaMemcpyHostToDevice);
-   } 
-
+   // https://stackoverflow.com/questions/9373929/cuda-transfer-2d-array-from-host-to-device
+   random_numbers = (double*) malloc( max_dimensions * max_samples * sizeof(double));
+   cudaMalloc(&random_numbers_d, max_dimensions * max_samples * sizeof(double));
    
    distances = (double*) malloc(max_samples * sizeof(double));
    cudaMalloc(&distances_d, max_samples * sizeof(double));
    
    for (size_t sample = 0; sample < max_samples; ++sample) {
       for (size_t dim = 0; dim < max_dimensions; ++dim) {
-         random_numbers[sample][dim] = distribution(e2);
+         random_numbers[(max_dimensions * sample) + dim] = distribution(e2);
+         std::cout << random_numbers[(max_dimensions * sample) + dim] << std::endl << std::endl;
+
       }
    }
    
+   cudaMemcpy(random_numbers_d, random_numbers, max_dimensions * max_samples * sizeof(double), cudaMemcpyHostToDevice);
    compute_distances<<<1, 1>>>(max_samples, max_dimensions, random_numbers_d, distances_d);
-   cudaMemcpy(distances, distances_d, max_samples*sizeof(double), cudaMemcpyDeviceToHost);
    cudaDeviceSynchronize();
+   cudaMemcpy(distances, distances_d, max_samples*sizeof(double), cudaMemcpyDeviceToHost);
 
-   for (size_t i = 0; i < max_samples; ++i) {
+   for (size_t i = 0; i < 1; ++i) {
+      // for (size_t j = 0; j < max_dimensions; ++j) {
+         // std::cout << random_numbers[(max_dimensions * i) + j] << std::endl;
+      // }
       std::cout << distances[i] << std::endl;
+      std::cout << sqrt(distances[i]) << std::endl;
    }
 
-   for (size_t i = 0; i < max_dimensions; ++i) {
-      // cudaFree(random_numbers_d[i]);
-      free(random_numbers[i]);
-   }
    cudaFree(distances_d);
    cudaFree(random_numbers_d);
    free(random_numbers);

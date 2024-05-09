@@ -10,7 +10,7 @@
 * date  : 2024-05-05
 * web   : https://cs.binghamton.edu/~gmaldonado/
 *
-* file name:   chypersphere.hh
+* file name:   chypersphere.h
 * description: D-dimensional Hypersphere computation using CUDA
 *
 *  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR

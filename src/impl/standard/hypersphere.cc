@@ -83,7 +83,7 @@ std::vector<histogram> compute(const uint8_t min_dimensions,
                                            [](const double x, const double y) {
                                               return (x * x) + (y * y);
                                            });
-         if (distance <= 1.0) {
+         if (sqrt(distance) <= 1.0) {
             dimensional_samples[dims - min_dimensions].push_back(point);
             dimensional_histogram[dims - min_dimensions].insert(1 - distance);
             ++samples;
