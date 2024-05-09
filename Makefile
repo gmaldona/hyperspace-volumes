@@ -21,7 +21,9 @@
 #
 
 CC     = g++
+NVCC   = nvcc
 CFLAGS = -std=c++17 -Wall -Wextra -pedantic -g # -O3
+#NVFLGS = -Xptxas -O3,-v
 SRC    = src/impl
 BUILD  = build/impl
 
@@ -44,13 +46,13 @@ simd.o:
 
 .PHONY: cuda
 cuda: common.o cuda.o
-	$(CC) $(CLFAGS) -o build/ball_samp-cuda \
+	$(NVCC) $(CLFAGS) -o build/ball_samp-cuda \
 				$(BUILD)/cuda/chypersphere.o build/common/common.o
 
 cuda.o:
 	mkdir -p $(BUILD)/cuda
-	$(CC) $(CFLAGS) -c $(SRC)/cuda/chypersphere.cc \
-						 -o $(BUILD)/cuda/chypersphere.o
+	$(NVCC) $(NVFLGS) -c $(SRC)/cuda/chypersphere.cu \
+						   -o $(BUILD)/cuda/chypersphere.o
 
 # Standard Implementation <<=========================================== 80 ===>>
 
