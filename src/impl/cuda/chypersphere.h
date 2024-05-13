@@ -39,7 +39,6 @@ class histogram {
  public:
    histogram(const int bins, const double intervals, const size_t samples);
    void insert(double sample) {
-      std::cout << sample << std::endl;
        ++this->_histogram[(size_t)std::ceil(sample * bins) - 1];
    }
    double getIntervals() const;

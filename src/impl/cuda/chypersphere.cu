@@ -58,14 +58,13 @@ std::vector<int> histogram::getHistogram() {
 }
 
 __global__ void compute_distances(int max_samples, 
-                                    int max_dimensions,
+                                    int dims,
                                     double* random_numbers,
                                     double* distances) {
 
    for (int i = 0; i < max_samples; ++i) {
-      for (int j = 0; j < max_dimensions; ++j) {
-         // printf("%f => %f\n", random_numbers[(max_dimensions * i) + j], random_numbers[(max_dimensions * i) + j] * random_numbers[(max_dimensions * i) + j]);
-         distances[i] += (random_numbers[(max_dimensions * i) + j] * random_numbers[(max_dimensions * i) + j]);
+      for (int j = 0; j < dims; ++j) {
+         distances[i] += (random_numbers[(dims * i) + j] * random_numbers[(dims * i) + j]);
       }
    } 
 }
@@ -106,7 +105,7 @@ std::vector<histogram> compute(const uint8_t min_dimensions, const uint8_t max_d
       }
 
       cudaMemcpy(random_numbers_d, random_numbers, max_dimensions * max_samples * sizeof(double), cudaMemcpyHostToDevice);
-      compute_distances<<<1, 1>>>(max_samples, max_dimensions, random_numbers_d, distances_d);
+      compute_distances<<<1, 256>>>(max_samples, dims, random_numbers_d, distances_d);
       cudaDeviceSynchronize();
       cudaMemcpy(distances, distances_d, max_samples*sizeof(double), cudaMemcpyDeviceToHost);
 
@@ -131,7 +130,7 @@ std::vector<histogram> compute(const uint8_t min_dimensions, const uint8_t max_d
 
 int main() {
    auto start    = std::chrono::high_resolution_clock::now();
-   auto dimensional_histogram = compute(2, 10, 3000);
+   auto dimensional_histogram = compute(2, 16, 3000);
    auto stop     = std::chrono::high_resolution_clock::now();
    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
