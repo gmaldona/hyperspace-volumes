@@ -34,10 +34,8 @@ histogram::histogram(const int    _bins,
                      const size_t _samples) : bins(_bins),
                                               intervals(_intervals),
                                               samples(_samples),
-                                              _histogram(_bins, 0) {}
-
-void histogram::insert(double sample) {
-   ++this->_histogram[(size_t)std::ceil(sample * bins) - 1];
+                                              _histogram(_bins, 0) {
+    this->_histogram = std::vector<int>(bins);
 }
 
 double histogram::getIntervals() const {
@@ -48,13 +46,7 @@ std::vector<int> histogram::getHistogram() {
    return this->_histogram;
 }
 
-std::vector<double> histogram::getRelativeFractionsHistogram() {
-   std::vector<double> mapped(_histogram.size());
-   std::transform(_histogram.begin(), _histogram.end(), mapped.begin(), [&](int x){
-      return (double)x / (double)this->samples;
-   });
-   return mapped;
-}
+
 
 std::vector<histogram> compute(const uint8_t min_dimensions,
              const uint8_t max_dimensions,
@@ -69,14 +61,13 @@ std::vector<histogram> compute(const uint8_t min_dimensions,
    auto dimensional_histogram = generate_histograms(max_dimensions - min_dimensions + 1,
                                                                       100, 0.01, max_samples);
    // dimension - sample - point
-   std::vector<std::vector<std::vector<double>>>
-      dimensional_samples(max_dimensions - min_dimensions + 1);
+   std::vector<std::vector<std::vector<double>>> dimensional_samples(max_dimensions);
 
    for (uint8_t dims = min_dimensions; dims <= max_dimensions; ++dims) {
       size_t samples = 0;
       while (samples < max_samples) {
-         std::vector<double> point(dims);
-         for (uint8_t dim = 1; dim <= dims; ++dim) {
+         std::vector<double> point = std::vector<double>(dims);
+         for (uint8_t dim = 0; dim < dims; ++dim) {
             point[dim] = distribution(e2);
          }
          double distance = std::accumulate(point.begin(), point.end(), 0.0,
@@ -84,7 +75,7 @@ std::vector<histogram> compute(const uint8_t min_dimensions,
                                               return (x * x) + (y * y);
                                            });
          if (sqrt(distance) <= 1.0) {
-            dimensional_samples[dims - min_dimensions].push_back(point);
+             (dimensional_samples[dims - min_dimensions]).push_back(point);
             dimensional_histogram[dims - min_dimensions].insert(1 - distance);
             ++samples;
          }

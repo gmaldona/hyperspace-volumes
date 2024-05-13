@@ -36,10 +36,18 @@ class histogram {
 
  public:
    histogram(const int bins, const double intervals, const size_t samples);
-   void insert(double sample);
+   void insert(double sample) {
+       auto& v = _histogram[(size_t)std::ceil(sample * bins) - 1];
+       ++this->_histogram[(size_t)std::ceil(sample * bins) - 1];
+   }
    double getIntervals() const;
    std::vector<int> getHistogram();
    std::vector<double> getRelativeFractionsHistogram();
+
+   ~histogram() {
+       this->_histogram.clear();
+
+   }
 
  private:
    const int bins;
@@ -66,15 +74,23 @@ std::vector<histogram> generate_histograms(const size_t n,
    return histograms;
 }
 
+std::vector<double> histogram::getRelativeFractionsHistogram() {
+    std::vector<double> mapped(_histogram.size());
+    std::transform(_histogram.begin(), _histogram.end(), mapped.begin(), [&](int x){
+        return (double)x / (double)this->samples;
+    });
+    return mapped;
+}
+
 /**
  *
  * @param os
  * @param _histogram
  * @return
  */
-std::ostream& operator<<(std::ostream& os, histogram _histogram) {
-   auto fractional = _histogram.getRelativeFractionsHistogram();
-   for (size_t i = 0; i < _histogram.getHistogram().size() - 1; ++i) {
+std::ostream& operator<<(std::ostream& os, histogram& _histogram) {
+    std::vector<double> fractional = _histogram.getRelativeFractionsHistogram();
+   for (size_t i = 0; i < fractional.size() - 1; ++i) {
       os << i * _histogram.getIntervals() << " - "
          << (i + 1) * _histogram.getIntervals() << " : "
          << fractional[i] << std::setprecision(5) << " ; ";
