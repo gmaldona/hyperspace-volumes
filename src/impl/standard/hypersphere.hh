@@ -37,7 +37,6 @@ class histogram {
  public:
    histogram(const int bins, const double intervals, const size_t samples);
    void insert(double sample) {
-       auto& v = _histogram[(size_t)std::ceil(sample * bins) - 1];
        ++this->_histogram[(size_t)std::ceil(sample * bins) - 1];
    }
    double getIntervals() const;
@@ -91,9 +90,10 @@ std::vector<double> histogram::getRelativeFractionsHistogram() {
 std::ostream& operator<<(std::ostream& os, histogram& _histogram) {
     std::vector<double> fractional = _histogram.getRelativeFractionsHistogram();
    for (size_t i = 0; i < fractional.size() - 1; ++i) {
-      os << i * _histogram.getIntervals() << " - "
-         << (i + 1) * _histogram.getIntervals() << " : "
-         << fractional[i] << std::setprecision(5) << " ; ";
+      os 
+    //   << i * _histogram.getIntervals() << " - "
+        //  << (i + 1) * _histogram.getIntervals() << " : "
+         << fractional[i] << std::setprecision(5) << " ";
    }
    os << std::endl;
 
@@ -114,6 +114,6 @@ std::ostream& operator<<(std::ostream& os, histogram& _histogram) {
  */
 std::vector<histogram> compute(const uint8_t min_dimensions = 2,
                                const uint8_t max_dimensions = 16,
-                               const size_t  max_samples    = 10'000);
+                               const size_t  max_samples    = 3'000);
 
 //==================================================================== 80 ====>>
