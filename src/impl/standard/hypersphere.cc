@@ -92,8 +92,8 @@ int main() {
 
    int dim = 2;
    for (auto& histogram : dimensional_histogram) {
-      std::cout << dim << "-Dimension: " << std::endl;
-      std::cout << histogram << std::endl;
+      std::cerr << dim << "-Dimension: " << std::endl;
+      std::cout << histogram;
       ++dim;
    }
    std::cerr << "time: " << duration.count() << " ms" << std::endl;

@@ -89,11 +89,11 @@ std::vector<double> histogram::getRelativeFractionsHistogram() {
  */
 std::ostream& operator<<(std::ostream& os, histogram& _histogram) {
     std::vector<double> fractional = _histogram.getRelativeFractionsHistogram();
-   for (size_t i = 0; i < fractional.size() - 1; ++i) {
-      os 
-    //   << i * _histogram.getIntervals() << " - "
-        //  << (i + 1) * _histogram.getIntervals() << " : "
-         << fractional[i] << std::setprecision(5) << " ";
+   for (size_t i = 0; i < fractional.size(); ++i) {
+      os << fractional[i] << std::setprecision(5);
+      if (i != fractional.size() - 1) {
+         os << ",";
+      }
    }
    os << std::endl;
 
@@ -114,6 +114,6 @@ std::ostream& operator<<(std::ostream& os, histogram& _histogram) {
  */
 std::vector<histogram> compute(const uint8_t min_dimensions = 2,
                                const uint8_t max_dimensions = 16,
-                               const size_t  max_samples    = 3'000);
+                               const size_t  max_samples    = 1'000'000);
 
 //==================================================================== 80 ====>>
