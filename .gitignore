@@ -10,5 +10,3 @@ CMakeLists.txt
 
 *.out
 *.o
-
-data.csv
