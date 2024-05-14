@@ -76,7 +76,7 @@ std::vector<histogram> generate_histograms(const size_t n,
 std::vector<double> histogram::getRelativeFractionsHistogram() {
     std::vector<double> mapped(_histogram.size());
     std::transform(_histogram.begin(), _histogram.end(), mapped.begin(), [&](int x){
-        return (double)x ;//// (double)this->samples;
+        return (double)x / (double)this->samples;
     });
     return mapped;
 }
