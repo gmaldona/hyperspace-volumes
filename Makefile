@@ -23,7 +23,7 @@
 CC     = g++
 NVCC   = nvcc
 CFLAGS = -std=c++17 -Wall -Wextra -pedantic -g # -O3
-#NVFLGS = -Xptxas -O3,-v
+NVFLGS = -Xptxas -O3,-v
 SRC    = src/impl
 BUILD  = build/impl
 
