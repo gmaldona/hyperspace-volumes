@@ -111,7 +111,7 @@ std::vector<histogram> compute(const uint8_t min_dimensions, const uint8_t max_d
       for (size_t i = 0; i < max_samples; ++i) {
          double dist = sqrt(distances[i]);
          if (dist <= 1.0) {
-            dimensional_histogram[dims - min_dimensions].insert(1 - dist);
+            dimensional_histogram[dims - min_dimensions].insert(dist);
          }
       }
    cudaFree(distances_d);
