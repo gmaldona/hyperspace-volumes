@@ -107,6 +107,6 @@ std::ostream& operator<<(std::ostream& os, histogram& _histogram) {
  */
 std::vector<histogram> compute(const uint8_t min_dimensions = 2,
                                const uint8_t max_dimensions = 16,
-                               const size_t  max_samples    = 1'000'000);
+                               const size_t  max_samples    = 100'000);
 
 //==================================================================== 80 ====>>
