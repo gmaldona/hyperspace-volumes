@@ -22,8 +22,6 @@
 * SOFTWARE.
 */
 
-//==================================================================== 80 ====>>
-
 #include <algorithm>
 #include <vector>
 #include <iostream>
@@ -78,7 +76,7 @@ std::vector<histogram> generate_histograms(const size_t n,
 std::vector<double> histogram::getRelativeFractionsHistogram() {
     std::vector<double> mapped(_histogram.size());
     std::transform(_histogram.begin(), _histogram.end(), mapped.begin(), [&](int x){
-        return (double)x; // / (double)this->samples;
+        return (double)x ;//// (double)this->samples;
     });
     return mapped;
 }
@@ -91,33 +89,24 @@ std::vector<double> histogram::getRelativeFractionsHistogram() {
  */
 std::ostream& operator<<(std::ostream& os, histogram& _histogram) {
     std::vector<double> fractional = _histogram.getRelativeFractionsHistogram();
-   for (size_t i = 0; i < fractional.size() - 1; ++i) {
-      os 
-    //   << i * _histogram.getIntervals() << " - "
-        //  << (i + 1) * _histogram.getIntervals() << " : "
-         << fractional[i] << std::setprecision(5) << " ";
+   for (size_t i = 0; i < fractional.size(); ++i) {
+      os << fractional[i] << std::fixed << std::setprecision(3);
+      if (i != fractional.size() - 1) {
+         os << ",";
+      }
    }
    os << std::endl;
-
-//   auto total = 0.0;
-//   for (int i = 0; i < 50; ++i) {
-//      total += fractional[i];
-//   }
-//   os << "[0.0, 0.5] : " << total << std::setprecision(5) << std::endl;
-
    return os;
 }
 
 /**
- *
  * @param min_dimensions
  * @param max_dimensions
  * @param max_samples
  */
 std::vector<histogram> compute(const uint8_t min_dimensions = 2,
                                const uint8_t max_dimensions = 16,
-                               const size_t  max_samples    = 3'000);
+                               const size_t  max_samples    = 10'000);
 
-//==================================================================== 80 ====>>
 
 //==================================================================== 80 ====>>
