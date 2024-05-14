@@ -90,7 +90,7 @@ std::vector<double> histogram::getRelativeFractionsHistogram() {
 std::ostream& operator<<(std::ostream& os, histogram& _histogram) {
     std::vector<double> fractional = _histogram.getRelativeFractionsHistogram();
    for (size_t i = 0; i < fractional.size(); ++i) {
-      os << fractional[i] << std::fixed << std::setprecision(3);
+      os << fractional[i] << std::fixed << std::setprecision(4);
       if (i != fractional.size() - 1) {
          os << ",";
       }

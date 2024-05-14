@@ -93,6 +93,7 @@ std::vector<histogram> compute(const uint8_t min_dimensions, const uint8_t max_d
        // https://stackoverflow.com/questions/9373929/cuda-transfer-2d-array-from-host-to-device
    random_numbers = (double*) malloc(dims * max_samples * sizeof(double));
    cudaMalloc(&random_numbers_d, dims * max_samples * sizeof(double));
+   int d = dims / 2;
 
    distances = (double*) malloc(max_samples * sizeof(double));
    cudaMalloc(&distances_d, max_samples * sizeof(double));
@@ -102,16 +103,16 @@ std::vector<histogram> compute(const uint8_t min_dimensions, const uint8_t max_d
             random_numbers[(dims * sample) + dim] = distribution(eng);
          }
       }
-
+      
       cudaMemcpy(random_numbers_d, random_numbers, dims * max_samples * sizeof(double), cudaMemcpyHostToDevice);
-      compute_distances<<<1, 256>>>(max_samples, dims, random_numbers_d, distances_d);
+      compute_distances<<<1, 256>>>(max_samples, d, random_numbers_d, distances_d);
       cudaDeviceSynchronize();
       cudaMemcpy(distances, distances_d, max_samples*sizeof(double), cudaMemcpyDeviceToHost);
 
       for (size_t i = 0; i < max_samples; ++i) {
          double dist = sqrt(distances[i]);
          if (dist <= 1.0) {
-            dimensional_histogram[dims - min_dimensions].insert(dist);
+            dimensional_histogram[dims - min_dimensions].insert(1 -dist);
          }
       }
    cudaFree(distances_d);
