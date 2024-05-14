@@ -12,7 +12,7 @@ CS 547 High Performance Computing @ Binghamton University
    * 2024-05-13 11:59 PM
 
 Last working commit:
-* [Insert last working commit]
+* [145a304](https://github.com/bu-cs447-2024-1s/final-gmaldona/commit/145a304c3dc8c117de202a10634353a336f56a70)
 
 ## Execution
 Included within the repository is a [Makefile](Makefile).
