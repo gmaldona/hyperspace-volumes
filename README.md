@@ -1,4 +1,4 @@
-# Volume of a D-dimensional Hypersphere (CUDA/SIMD)
+# Volume of a D-dimensional Hypersphere (CUDA/~~SIMD~~)
 
 CS 547 High Performance Computing @ Binghamton University
 
@@ -31,7 +31,7 @@ make cpu && ./build/ball_samp-cpu
 make cuda && ./build/ball_samp-cuda
 ```
 
-### SIMD Implementation
+### ~~SIMD Implementation~~
 ```shell
 make simd && ./build/ball_samp-simd
 ```
